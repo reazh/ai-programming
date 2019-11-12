@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 # */AIPND-revision/intropyproject-classify-pet-images/adjust_results4_isadog.py
 #                                                                             
-# PROGRAMMER: 
-# DATE CREATED:                                 
+# PROGRAMMER: Reaz Hasan
+# DATE CREATED: 10/23/2019                        
 # REVISED DATE: 
 # PURPOSE: Create a function adjust_results4_isadog that adjusts the results 
 #          dictionary to indicate whether or not the pet image label is of-a-dog, 
@@ -59,12 +59,39 @@ def adjust_results4_isadog(results_dic, dogfile):
      dogfile - A text file that contains names of all dogs from the classifier
                function and dog names from the pet image files. This file has 
                one dog name per line dog names are all in lowercase with 
-               spaces separating the distinct words of the dog name. Dog names
+               spacefs separating the distinct words of the dog name. Dog names
                from the classifier function can be a string of dog names separated
                by commas when a particular breed of dog has multiple dog names 
                associated with that breed (ex. maltese dog, maltese terrier, 
                maltese) (string - indicates text file's filename)
     Returns:
            None - results_dic is mutable data type so no return needed.
-    """           
-    None
+    """      
+    dognames = dict()
+   
+    with open(dogfile, 'r') as infile:
+        line = infile.readline()
+        
+        while line != "":
+            line = line.strip()
+            if line not in dognames:
+                dognames[line] = 1
+            line = infile.readline()
+            
+    
+    for imagefile in results_dic:
+        if results_dic[imagefile][0] in dognames:
+            results_dic[imagefile].extend([1]) # index 3 
+        else: 
+            results_dic[imagefile].extend([0])
+            
+        if results_dic[imagefile][1] in dognames:
+            results_dic[imagefile].extend([1]) # index 4 
+        else:
+            results_dic[imagefile].extend([0])
+            
+            
+    return
+    
+
+    

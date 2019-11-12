@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 # */AIPND-revision/intropyproject-classify-pet-images/print_results.py
 #                                                                             
-# PROGRAMMER: 
-# DATE CREATED:
+# PROGRAMMER: Reaz Hasan
+# DATE CREATED: 10/23/2019
 # REVISED DATE: 
 # PURPOSE: Create a function print_results that prints the results statistics
 #          from the results statistics dictionary (results_stats_dic). It 
@@ -62,5 +62,34 @@ def print_results(results_dic, results_stats_dic, model,
     Returns:
            None - simply printing results.
     """    
+    print("\n\n*** Results for CNN model architecture ", model.upper(),"***")
+    print("{:20}: {:3d}".format('N Images', results_stats_dic['n_images']))
+    print("{:20}: {:3d}".format('N Dog Images', results_stats_dic['n_dogs_img']))
+    print("{:20}: {:3d}".format('N Not Dog Images', results_stats_dic['n_notdogs_img']))
+    
+   
+    for key, value in results_stats_dic.items():
+        if key[0] == 'p':
+            print("{:20}: {:3.2f}%".format(key, value))
+
+    # incorrectly classified as dogs means label says NOT a dog but classifier thinks it's a dog
+    # or label says it is a dog but classifier says it is NOT a dog
+    # first we have to make sure we have incorrect dog situations and the user is requesting this output
+    if print_incorrect_dogs and (results_stats_dic['n_correct_dogs'] + results_stats_dic['n_correct_notdogs'] != results_stats_dic['n_images']):
+        print("\nIncorrect Dog Classification: ")
+        for key in results_dic:
+            isdog_notclassified = results_dic[key][3] and not results_dic[key][4]
+            isnotdog_classified = not results_dic[key][3] and results_dic[key][4]
+            if isdog_notclassified or isnotdog_classified:
+                print("{:30}| Real: {:20}| Classification: {:20}".format(key, results_dic[key][0], results_dic[key][1]))
+                
+    # incorrectly classified breed means we have a mismatch for breed but is a dog           
+    # so we have to check to see if we have cases of incorrect breed 
+    if print_incorrect_breed and (results_stats_dic['n_correct_dogs'] != results_stats_dic['n_correct_breed']):
+        print("\nIncorrectly Classified Breed: ")
+        for key in results_dic:
+            if results_dic[key][3] and results_dic[key][4] and not results_dic[key][2]:
+                print("{:30}| Real: {:20}| Classification: {:20}".format(key, results_dic[key][0], results_dic[key][1]))
+            
     None
                 
